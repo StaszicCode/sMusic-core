@@ -14,7 +14,7 @@ from base64 import b64encode, b64decode
 from inspect import getargspec
 from threading import Thread
 from functools import partial
-__version__ = "0.1.1 Alpha"
+__version__ = "0.1.2 Alpha"
 binds = {}
 PATTERN_MSG = re.compile("([ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789=+/]*?)\n(.+)?", re.DOTALL)
 
@@ -100,12 +100,15 @@ def get_artists():
 
 @bind
 def get_albums(artist=None):
+    # album = [Album]
     if artist:
         lib_artist = library.get_artist(artist)
-        albums = [{"name": album.name, "id": album.id} for album in sorted(lib_artist.get_albums(), key=lambda x: x.name)]
+        albums = [{"name": album.name, "id": album.id} for album in sorted(lib_artist.get_albums(),
+                                                                           key=lambda x: (x.year, x.name))]
         return {"request": "ok", "albums": albums, "artist_name": lib_artist.name}
     else:
-        albums = [{"name": album.name, "id": album.id} for album in sorted(library.get_albums().values(), key=lambda x: x.name)]
+        albums = [{"name": album.name, "id": album.id} for album in sorted(library.get_albums().values(),
+                                                                           key=lambda x: (x.year, x.name))]
     return {"request": "ok", "albums": albums}
 
 
